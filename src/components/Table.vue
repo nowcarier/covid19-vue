@@ -1,7 +1,9 @@
 <template>
   <div class="container shadow-lg p-3 mb-5 bg-white rounded">
+    <input class="form-control" id="exampleInputEmail1" placeholder="MM/DD/YY" type="text" v-model="textDate"><br>
     <div class="overflow-auto">
       <b-table
+        :filter="textDate"
         id="my-table"
         :per-page="perPage"
         :current-page="currentPage"
@@ -10,6 +12,7 @@
         hover
         :items="items"
         :fields="fields"
+        key="items.date"
       ></b-table>
       <p class="mt-3">Current Page: {{ currentPage }}</p>
       <b-pagination
@@ -19,39 +22,22 @@
         aria-controls="my-table"
       ></b-pagination>
     </div>
-        <div class="row">
-      <div class="col">
-        <input
-          v-model="message"
-          placeholder="Filter by date"
-          type="text"
-          class="form-control"
-        />
-      </div>
-      <div class="col-1">
-        <button
-          @click="filterChart(message)"
-          type="submit"
-          class="btn btn-primary mb-2"
-        >
-          submit
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 const axios = require("axios");
 export default {
-    name:'Table',
+  name: "Table",
   data: () => {
     return {
       perPage: 10,
       currentPage: 1,
+      textDate:'',
       items: [],
       store: [],
-      message: "",
+      startDate: "",
+      intData: "",
       fields: [
         "Date",
         "Cases",
@@ -69,8 +55,18 @@ export default {
     },
   },
   methods: {
-    filterChart(message) {
-      this.items = this.store.slice(30 - message);
+    filterTable() {
+      let myDate = new Date(this.startDate);
+      for (let i = 0; i < this.items.length; i++) {
+        const element = new Date(Object.values(this.items[i])[0]);
+        if (myDate.getDate() === element.getDate()) {
+          console.log(element);
+          console.log(i);
+          console.log(myDate);
+          this.items = this.store.slice(i);
+          break;
+        }
+      }
     },
   },
   async created() {

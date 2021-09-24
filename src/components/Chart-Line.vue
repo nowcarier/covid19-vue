@@ -5,24 +5,15 @@
       style="position: relative; height: 40vh; width: 80vw"
     ></canvas>
     <br />
-    <div class="row">
-      <div class="col">
-        <input
-          v-model="message"
-          placeholder="Filter by date"
-          type="text"
-          class="form-control"
-        />
-      </div>
-      <div class="col-1">
-        <button
-          @click="filterChart(message)"
-          type="submit"
-          class="btn btn-primary mb-2"
-        >
-          submit
-        </button>
-      </div>
+    <div>
+      <b-form-datepicker
+        id="example-datepicker"
+        @input="filterChart()"
+        v-model="startDate"
+        class="mb-2"
+        max="2021-09-23"
+        min="2021-08-25"
+      ></b-form-datepicker>
     </div>
   </div>
 </template>
@@ -44,15 +35,29 @@ export default {
   data() {
     return {
       myLineChart: null,
-      message: "",
+      startDate: "",
+      endDate: "",
+      maxDate:'',
+      minDate:''
     };
   },
   methods: {
-    filterChart(message) {
-      console.log(this.label.slice(30 - message));
-      this.myLineChart.data.labels = this.label.slice(30 - message);
-      this.myLineChart.update();
+    filterChart() {
+      let myDate = new Date(this.startDate);
+      for (let i = 0; i < this.date.length; i++) {
+        const element = new Date(this.date[i]);
+        if (myDate.getDate() === element.getDate()) {
+          this.myLineChart.data.labels = this.date.slice(i, 30);
+          this.myLineChart.update();
+          break;
+        }
+      }
     },
+  },
+  created() {
+    setTimeout(() => {
+      this.myLineChart.update();
+    }, 100);
   },
   mounted() {
     var ctx = document.getElementById("myChart");
